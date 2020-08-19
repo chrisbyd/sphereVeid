@@ -7,9 +7,10 @@ import torch.nn.functional as F
 from .softmax_loss import CrossEntropyLabelSmooth
 from .triplet_loss import TripletLoss
 from .center_loss import CenterLoss
+from  .sphere_loss import OhemSphereLoss,SphereLoss
 
 
-def make_loss(cfg, num_classes):    # modified by gu
+def make_loss(cfg,num_classes):    # modified by gu
     SAMPLER = 'softmax_triplet'
     print(SAMPLER)
     feat_dim = 2048
@@ -17,7 +18,8 @@ def make_loss(cfg, num_classes):    # modified by gu
     MARGIN = 0.3
     IF_LABELSMOOTH = 'off'
     center_criterion = CenterLoss(num_classes=num_classes, feat_dim=feat_dim, use_gpu=True)  # center loss
-
+    sphere_criterion = OhemSphereLoss(feat_dim,num_classes,thresh=0.8)
+    sphere_criterion.cuda()
     if not_use_margin:
         triplet = TripletLoss()
         print("using soft triplet loss for training")
@@ -32,11 +34,8 @@ def make_loss(cfg, num_classes):    # modified by gu
 
 
     if  SAMPLER == 'softmax_triplet':
-        def loss_func(score, feat, target):
-            if IF_LABELSMOOTH == 'on':
-                return xent(score, target) + triplet(feat, target)[0]
-            else:
-                return F.cross_entropy(score, target) + triplet(feat, target)[0]
+        def loss_func( feat, target):
+                return sphere_criterion(feat,target) + triplet(feat, target)[0]
 
     else:
         print('expected sampler should be softmax, triplet, softmax_triplet or softmax_triplet_center'

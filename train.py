@@ -81,7 +81,7 @@ if __name__ == '__main__':
             target = vid.to(device)
 
             score, feat = model(img, target)
-            loss = loss_func(score, feat, target)
+            loss = loss_func(feat, target)
 
             loss.backward()
             optimizer.step()

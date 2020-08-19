@@ -70,12 +70,12 @@ class Backbone(nn.Module):
 
         self.num_classes = num_classes
 
-        if self.cos_layer:
-            print('using cosine layer')
-            self.arcface = ArcFace(self.in_planes, self.num_classes, s=30.0, m=0.50)
-        else:
-            self.classifier = nn.Linear(self.in_planes, self.num_classes, bias=False)
-            self.classifier.apply(weights_init_classifier)
+        # if self.cos_layer:
+        #     print('using cosine layer')
+        #     self.arcface = ArcFace(self.in_planes, self.num_classes, s=30.0, m=0.50)
+        # else:
+        #     self.classifier = nn.Linear(self.in_planes, self.num_classes, bias=False)
+        #     self.classifier.apply(weights_init_classifier)
 
         self.bottleneck = nn.BatchNorm1d(self.in_planes)
         self.bottleneck.bias.requires_grad_(False)
@@ -93,11 +93,11 @@ class Backbone(nn.Module):
             feat = self.bottleneck(global_feat)
 
         if self.training:
-            if self.cos_layer:
-                cls_score = self.arcface(feat, label)
-            else:
-                cls_score = self.classifier(feat)
-            return cls_score, global_feat  # global feature for triplet loss
+            # if self.cos_layer:
+            #     cls_score = self.arcface(feat, label)
+            # else:
+            #     cls_score = self.classifier(feat)
+            return  global_feat  # global feature for triplet loss
         else:
             if self.neck_feat == 'after':
                 # print("Test with feature after BN")

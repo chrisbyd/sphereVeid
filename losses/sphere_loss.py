@@ -29,7 +29,7 @@ class OhemSphereLoss(nn.Module):
         loss = self.cross_entropy(s_cos_th, label)
         loss, _ = torch.sort(loss, descending=True)
         loss = torch.mean(loss[:n_pick])
-        return loss
+        return loss, s_cos_th
 
 
 class SphereLoss(nn.Module):

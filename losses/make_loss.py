@@ -35,7 +35,8 @@ def make_loss(cfg,num_classes):    # modified by gu
 
     if  SAMPLER == 'softmax_triplet':
         def loss_func( feat, target):
-                return sphere_criterion(feat,target) + triplet(feat, target)[0]
+            loss_hyper,score = sphere_criterion(feat,target)
+            return loss_hyper+ triplet(feat, target)[0] ,score
 
     else:
         print('expected sampler should be softmax, triplet, softmax_triplet or softmax_triplet_center'

@@ -33,7 +33,7 @@ if __name__ == '__main__':
     make_dirs(output_path)
     logger = setup_logger('reid_baseline',output_path,if_train=True)
 
-    train_loader, val_loader, num_query, num_classes = make_dataloader(config)
+    train_loader,train_gen_loader, val_loader, num_query, num_classes = make_dataloader(config)
     model = Backbone(num_classes,config)
     # if config.pretrain:
     #     model.load_param_finetune(config.m_pretrain_path)
@@ -80,8 +80,8 @@ if __name__ == '__main__':
             img = img.to(device)
             target = vid.to(device)
 
-            score, feat = model(img, target)
-            loss = loss_func(feat, target)
+            feat = model(img, target)
+            loss,score = loss_func(feat, target)
 
             loss.backward()
             optimizer.step()
